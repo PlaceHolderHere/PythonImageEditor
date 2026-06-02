@@ -2,10 +2,13 @@ import image_functions
 import os
 import tkinter as tk
 from tkinter import filedialog
+from PIL import Image, ImageOps, ImageTk
 
 # Constants
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
+PHOTO_WIDTH = SCREEN_WIDTH - 320
+PHOTO_HEIGHT = SCREEN_HEIGHT - 180
 PRIMARY_COLOR = "#C3D5EF"
 ACCENT_COLOR = "#26384D"
 SIDEBAR_WIDTH = 88
@@ -22,9 +25,6 @@ UPLOAD_BUTTON_EXTENSIONS = "*.png *.pgm *.ppm *.gif"
 
 class PythonImageEditor:
     def __init__(self):
-        # Variables
-        self.photo_path = PLACEHOLDER_PHOTO
-
         # Tkinter Initialization
         self.root = tk.Tk()
         self.root.title("Python Image Editor")
@@ -47,9 +47,16 @@ class PythonImageEditor:
         self.content_frame.pack(side="right", fill="both", expand=True)
 
         # Photo
-        self.photo = tk.PhotoImage(file=self.photo_path)
-        self.photo_label = tk.Label(self.content_frame, image=self.photo, width=SCREEN_WIDTH - 320, height=SCREEN_HEIGHT - 180)
-        self.photo_label.pack(expand=True)
+        self.photo_canvas = tk.Canvas(self.content_frame, width=PHOTO_WIDTH, height=PHOTO_HEIGHT, bg="black",
+                                      highlightthickness=0)
+        self.photo_canvas.pack(expand=True)
+
+        self.photo_path = PLACEHOLDER_PHOTO
+        self.pillow_photo = Image.open(self.photo_path)
+        self.resized_photo = ImageOps.contain(self.pillow_photo, (PHOTO_WIDTH, PHOTO_HEIGHT))
+        self.display_photo = ImageTk.PhotoImage(self.resized_photo)
+        self.photo_canvas.create_image(PHOTO_WIDTH // 2, PHOTO_HEIGHT // 2, image=self.display_photo,
+                                       anchor="center")
 
         # Main Loop
         self.root.mainloop()
@@ -64,9 +71,13 @@ class PythonImageEditor:
         if selected_path:
             if self.verify_upload(selected_path):
                 # Updating Related Variables/Labels After Selecting a new Photo
+                self.pillow_photo.close()
                 self.photo_path = selected_path
-                self.photo = tk.PhotoImage(file=self.photo_path)
-                self.photo_label.config(image=self.photo)
+                self.pillow_photo = Image.open(self.photo_path)
+                self.resized_photo = ImageOps.contain(self.pillow_photo, (PHOTO_WIDTH, PHOTO_HEIGHT))
+                self.display_photo = ImageTk.PhotoImage(self.resized_photo)
+                self.photo_canvas.create_image(PHOTO_WIDTH // 2, PHOTO_HEIGHT // 2, image=self.display_photo,
+                                               anchor="center")
             else:
                 # Creating a pop-up to show an error
                 popup = tk.Toplevel(self.root)
