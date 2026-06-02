@@ -47,16 +47,15 @@ class PythonImageEditor:
         self.content_frame.pack(side="right", fill="both", expand=True)
 
         # Photo
-        self.photo_canvas = tk.Canvas(self.content_frame, width=PHOTO_WIDTH, height=PHOTO_HEIGHT, bg="black",
-                                      highlightthickness=0)
+        self.photo_canvas = tk.Canvas(self.content_frame, width=PHOTO_WIDTH, height=PHOTO_HEIGHT, highlightthickness=0)
         self.photo_canvas.pack(expand=True)
 
         self.photo_path = PLACEHOLDER_PHOTO
         self.pillow_photo = Image.open(self.photo_path)
         self.resized_photo = ImageOps.contain(self.pillow_photo, (PHOTO_WIDTH, PHOTO_HEIGHT))
         self.display_photo = ImageTk.PhotoImage(self.resized_photo)
-        self.photo_canvas.create_image(PHOTO_WIDTH // 2, PHOTO_HEIGHT // 2, image=self.display_photo,
-                                       anchor="center")
+        self.photo_id = self.photo_canvas.create_image(PHOTO_WIDTH // 2, PHOTO_HEIGHT // 2,
+                                                       image=self.display_photo, anchor="center")
 
         # Main Loop
         self.root.mainloop()
@@ -76,8 +75,7 @@ class PythonImageEditor:
                 self.pillow_photo = Image.open(self.photo_path)
                 self.resized_photo = ImageOps.contain(self.pillow_photo, (PHOTO_WIDTH, PHOTO_HEIGHT))
                 self.display_photo = ImageTk.PhotoImage(self.resized_photo)
-                self.photo_canvas.create_image(PHOTO_WIDTH // 2, PHOTO_HEIGHT // 2, image=self.display_photo,
-                                               anchor="center")
+                self.photo_canvas.itemconfig(self.photo_id, image=self.display_photo)
             else:
                 # Creating a pop-up to show an error
                 popup = tk.Toplevel(self.root)
