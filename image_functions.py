@@ -1,4 +1,4 @@
-from PIL import Image, ImageFilter
+from PIL import ImageFilter
 
 
 def gray_scale(image):
