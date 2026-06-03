@@ -17,7 +17,7 @@ def horizontal_flip(image):
     return image.transpose(0)
 
 
-def blur_image(image, intensity):  # Base Level is 2
+def blur_image(image, intensity: float):  # Base Level is 2
     return image.filter(ImageFilter.GaussianBlur(radius=intensity))
 
 

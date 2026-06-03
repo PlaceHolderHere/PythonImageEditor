@@ -5,19 +5,19 @@ from tkinter import filedialog
 from PIL import Image, ImageOps, ImageTk
 
 # Constants
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
-PHOTO_WIDTH = SCREEN_WIDTH - 320
-PHOTO_HEIGHT = SCREEN_HEIGHT - 180
-PRIMARY_COLOR = "#C3D5EF"
-ACCENT_COLOR = "#26384D"
-SIDEBAR_WIDTH = 88
-NAVBAR_HEIGHT = 64
-PLACEHOLDER_PHOTO = "assets/placeholder-photo.png"
-VALID_FILE_EXTENSIONS = {".png": 0, ".pgm": 0, ".ppm": 0, ".gif": 0}
+SCREEN_WIDTH: int = 1280
+SCREEN_HEIGHT: int = 720
+PHOTO_WIDTH: int = SCREEN_WIDTH - 320
+PHOTO_HEIGHT: int = SCREEN_HEIGHT - 180
+PRIMARY_COLOR:str = "#C3D5EF"
+ACCENT_COLOR:str = "#26384D"
+SIDEBAR_WIDTH: int = 88
+NAVBAR_HEIGHT: int = 64
+PLACEHOLDER_PHOTO: str = "assets/placeholder-photo.png"
+VALID_FILE_EXTENSIONS: dict[str, int] = {".png": 0, ".pgm": 0, ".ppm": 0, ".gif": 0}
 
 # Formatting a string for filedialog option
-UPLOAD_BUTTON_EXTENSIONS = "*.png *.pgm *.ppm *.gif"
+UPLOAD_BUTTON_EXTENSIONS: str = "*.png *.pgm *.ppm *.gif"
 
 # NOTE:
 # Currently PhotoImage in tkinter only supports 4 file types, however PIL supports a lot more
@@ -60,7 +60,7 @@ class PythonImageEditor:
         # Main Loop
         self.root.mainloop()
 
-    def upload_function(self):
+    def upload_function(self) -> None:
         selected_path = filedialog.askopenfilename(
             title="Select a Photo to Edit",
             filetypes=[("Photos", UPLOAD_BUTTON_EXTENSIONS)],
@@ -93,7 +93,7 @@ class PythonImageEditor:
                 popup.after(2000, popup.destroy)
 
     @staticmethod
-    def verify_upload(path):
+    def verify_upload(path: str) -> bool:
         if not os.path.exists(path):
             return False
 
