@@ -17,8 +17,7 @@ PLACEHOLDER_PHOTO: str = "assets/placeholder-photo.png"
 VALID_FILE_EXTENSIONS: dict[str, int] = {".png": 0, ".pgm": 0, ".ppm": 0, ".gif": 0}
 
 # Formatting a string for filedialog option
-# UPLOAD_BUTTON_EXTENSIONS: str = "*.png *.pgm *.ppm *.gif"
-UPLOAD_BUTTON_EXTENSIONS: str = "*.*"
+UPLOAD_BUTTON_EXTENSIONS: str = "*.png *.pgm *.ppm *.gif"
 
 # NOTE:
 # Currently PhotoImage in tkinter only supports 4 file types, however PIL supports a lot more
@@ -40,6 +39,9 @@ class PythonImageEditor:
         self.upload_button = tk.Button(self.navbar_frame, text="upload", command=self.upload_function)
         self.upload_button.pack(side="left", padx=16, pady=20)
 
+        self.save_button = tk.Button(self.navbar_frame, text="save", command=self.save_photo)
+        self.save_button.pack(side="left", pady=20)
+
         # SideBar
         self.sidebar_frame = tk.Frame(self.root, bg=PRIMARY_COLOR, width=SIDEBAR_WIDTH, height=SCREEN_HEIGHT)
         self.sidebar_frame.pack(side="left")
@@ -53,6 +55,8 @@ class PythonImageEditor:
         self.photo_canvas.pack(expand=True)
 
         self.photo_path = PLACEHOLDER_PHOTO
+        self.photo_name = "placeholder-photo"
+        self.photo_extension = ".png"
         self.pillow_photo = Image.open(self.photo_path)
         self.resized_photo = ImageOps.contain(self.pillow_photo, (PHOTO_WIDTH, PHOTO_HEIGHT))
         self.display_photo = ImageTk.PhotoImage(self.resized_photo)
@@ -74,13 +78,63 @@ class PythonImageEditor:
                 # Updating Related Variables/Labels After Selecting a new Photo
                 self.pillow_photo.close()
                 self.photo_path = selected_path
+                self.photo_name, self.photo_extension = os.path.splitext(os.path.basename(self.photo_path))
                 self.pillow_photo = Image.open(self.photo_path)
                 self.resized_photo = ImageOps.contain(self.pillow_photo, (PHOTO_WIDTH, PHOTO_HEIGHT))
                 self.display_photo = ImageTk.PhotoImage(self.resized_photo)
                 self.photo_canvas.itemconfig(self.photo_id, image=self.display_photo)
             else:
-                self.create_error_popup("Invalid Input Image! Please try uploading again.", (400, 100))
+                self.create_popup(
+                    "Error!",
+                    "Invalid Input Image! Please try uploading again.",
+                    (400, 100)
+                )
 
+    def get_output_path(self) -> str:
+        return filedialog.asksaveasfilename(
+            title="Save Photo",
+            initialfile=self.photo_name,
+            defaultextension=self.photo_extension,
+            filetypes=[("Select an Output Folder", "/")]
+        )
+
+    def save_photo(self):
+        if self.photo_path == PLACEHOLDER_PHOTO:
+            self.create_popup(
+                "Error!",
+                "Error! You have not uploaded an image to be saved\nPlease upload an image before saving.",
+                (400, 100)
+            )
+            return False
+
+        # Checking if an output path is selected
+        output_path = self.get_output_path()
+        print(output_path)
+        if output_path:
+            output_name, output_ext = os.path.splitext(output_path)
+            if output_ext.lower() not in VALID_FILE_EXTENSIONS:
+                self.create_popup(
+                    "Error!",
+                    f"Error! Failed to Save {self.photo_name}.\nPlease try a different file extension.",
+                    (450, 100)
+                )
+                return False
+
+            try:
+                self.pillow_photo.save(output_path)
+                self.create_popup(
+                    "Success!",
+                    f"Image was successfully saved at\n{output_path}.",
+                    (400, 100)
+                )
+                return True
+            except:
+                self.create_popup(
+                    "Error!",
+                    f"Error! Failed to Save {self.photo_name}.\nPlease try again.",
+                    (400, 100)
+                )
+        return False
 
     @staticmethod
     def verify_image_path(path: str) -> bool:
@@ -92,10 +146,10 @@ class PythonImageEditor:
             return False
         return True
 
-    def create_error_popup(self, message: str, size: tuple[int, int]) -> None:
+    def create_popup(self,  title: str, message: str, size: tuple[int, int]) -> None:
         # Creating a pop-up to show an error
         popup = tk.Toplevel(self.root)
-        popup.title("Error!")
+        popup.title(title)
         popup.geometry(f"{size[0]}x{size[1]}")
         popup.resizable(False, False)
         popup.grab_set()  # blocks user from performing other actions unless pop-up is closed
