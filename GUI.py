@@ -17,12 +17,14 @@ PLACEHOLDER_PHOTO: str = "assets/placeholder-photo.png"
 VALID_FILE_EXTENSIONS: dict[str, int] = {".png": 0, ".pgm": 0, ".ppm": 0, ".gif": 0}
 
 # Formatting a string for filedialog option
-UPLOAD_BUTTON_EXTENSIONS: str = "*.png *.pgm *.ppm *.gif"
+# UPLOAD_BUTTON_EXTENSIONS: str = "*.png *.pgm *.ppm *.gif"
+UPLOAD_BUTTON_EXTENSIONS: str = "*.*"
 
 # NOTE:
 # Currently PhotoImage in tkinter only supports 4 file types, however PIL supports a lot more
 # In the future I'll convert the inputted image into a png for display purposes and store it in ./assets
 
+# Classes
 class PythonImageEditor:
     def __init__(self):
         # Tkinter Initialization
@@ -68,7 +70,7 @@ class PythonImageEditor:
 
         # Checking if a file was selected
         if selected_path:
-            if self.verify_upload(selected_path):
+            if self.verify_image_path(selected_path):
                 # Updating Related Variables/Labels After Selecting a new Photo
                 self.pillow_photo.close()
                 self.photo_path = selected_path
@@ -77,23 +79,11 @@ class PythonImageEditor:
                 self.display_photo = ImageTk.PhotoImage(self.resized_photo)
                 self.photo_canvas.itemconfig(self.photo_id, image=self.display_photo)
             else:
-                # Creating a pop-up to show an error
-                popup = tk.Toplevel(self.root)
-                popup.title("Error")
-                popup.geometry("250x75")
-                popup.resizable(False, False)
-                popup.grab_set() # blocks user from performing other actions unless pop-up is closed
-                self.root.eval(f"tk::PlaceWindow {popup} center") # centers popup
+                self.create_error_popup("Invalid Input Image! Please try uploading again.", (400, 100))
 
-                # Error Message
-                label = tk.Label(popup, text="Invalid Input! Please try again.", font=("Arial", 12), pady=20)
-                label.pack()
-
-                # Closes the Popup after 2000 ms
-                popup.after(2000, popup.destroy)
 
     @staticmethod
-    def verify_upload(path: str) -> bool:
+    def verify_image_path(path: str) -> bool:
         if not os.path.exists(path):
             return False
 
@@ -102,6 +92,21 @@ class PythonImageEditor:
             return False
         return True
 
+    def create_error_popup(self, message: str, size: tuple[int, int]) -> None:
+        # Creating a pop-up to show an error
+        popup = tk.Toplevel(self.root)
+        popup.title("Error!")
+        popup.geometry(f"{size[0]}x{size[1]}")
+        popup.resizable(False, False)
+        popup.grab_set()  # blocks user from performing other actions unless pop-up is closed
+        self.root.eval(f"tk::PlaceWindow {popup} center")  # centers popup
+
+        # Error Message
+        label = tk.Label(popup, text=message, font=("Arial", 12), pady=20)
+        label.pack()
+
+        close_btn = tk.Button(popup, text="Close", width=7, height=2, command=popup.destroy, bg=PRIMARY_COLOR)
+        close_btn.pack()
 
 if __name__ == "__main__":
     PythonImageEditor()
