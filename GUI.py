@@ -66,11 +66,15 @@ class PythonImageEditor:
         # Main Loop
         self.root.mainloop()
 
-    def upload_function(self) -> None:
-        selected_path = filedialog.askopenfilename(
+    def get_upload_path(self) -> str:
+        return filedialog.askopenfilename(
             title="Select a Photo to Edit",
             filetypes=[("Photos", UPLOAD_BUTTON_EXTENSIONS)],
         )
+
+
+    def upload_function(self) -> bool:
+        selected_path = self.get_upload_path()
 
         # Checking if a file was selected
         if selected_path:
@@ -83,12 +87,14 @@ class PythonImageEditor:
                 self.resized_photo = ImageOps.contain(self.pillow_photo, (PHOTO_WIDTH, PHOTO_HEIGHT))
                 self.display_photo = ImageTk.PhotoImage(self.resized_photo)
                 self.photo_canvas.itemconfig(self.photo_id, image=self.display_photo)
+                return True
             else:
                 self.create_popup(
                     "Error!",
                     "Invalid Input Image! Please try uploading again.",
                     (400, 100)
                 )
+        return False
 
     def get_output_path(self) -> str:
         return filedialog.asksaveasfilename(
@@ -98,7 +104,7 @@ class PythonImageEditor:
             filetypes=[("Select an Output Folder", "/")]
         )
 
-    def save_photo(self):
+    def save_photo(self) -> bool:
         if self.photo_path == PLACEHOLDER_PHOTO:
             self.create_popup(
                 "Error!",
@@ -109,7 +115,6 @@ class PythonImageEditor:
 
         # Checking if an output path is selected
         output_path = self.get_output_path()
-        print(output_path)
         if output_path:
             output_name, output_ext = os.path.splitext(output_path)
             if output_ext.lower() not in VALID_FILE_EXTENSIONS:
