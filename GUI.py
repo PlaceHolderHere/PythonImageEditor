@@ -36,7 +36,7 @@ class PythonImageEditor:
         self.navbar_frame = tk.Frame(self.root, bg=ACCENT_COLOR, width=SCREEN_WIDTH, height=NAVBAR_HEIGHT)
         self.navbar_frame.pack(side="top", padx=0, pady=0, fill="x")
 
-        self.upload_button = tk.Button(self.navbar_frame, text="upload", command=self.upload_function)
+        self.upload_button = tk.Button(self.navbar_frame, text="upload", command=self.update_upload_path)
         self.upload_button.pack(side="left", padx=16, pady=20)
 
         self.save_button = tk.Button(self.navbar_frame, text="save", command=self.save_photo)
@@ -66,14 +66,14 @@ class PythonImageEditor:
         # Main Loop
         self.root.mainloop()
 
-    def get_upload_path(self) -> str:
+    @staticmethod
+    def get_upload_path() -> str:
         return filedialog.askopenfilename(
             title="Select a Photo to Edit",
             filetypes=[("Photos", UPLOAD_BUTTON_EXTENSIONS)],
         )
 
-
-    def upload_function(self) -> bool:
+    def update_upload_path(self) -> bool:
         selected_path = self.get_upload_path()
 
         # Checking if a file was selected
