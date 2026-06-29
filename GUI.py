@@ -66,6 +66,11 @@ class PythonImageEditor:
         # Main Loop
         self.root.mainloop()
 
+    def update_display_photo(self):
+        self.resized_photo = ImageOps.contain(self.pillow_photo, (PHOTO_WIDTH, PHOTO_HEIGHT))
+        self.display_photo = ImageTk.PhotoImage(self.resized_photo)
+        self.photo_canvas.itemconfig(self.photo_id, image=self.display_photo)
+
     @staticmethod
     def get_upload_path() -> str:
         return filedialog.askopenfilename(
@@ -84,9 +89,7 @@ class PythonImageEditor:
                 self.photo_path = selected_path
                 self.photo_name, self.photo_extension = os.path.splitext(os.path.basename(self.photo_path))
                 self.pillow_photo = Image.open(self.photo_path)
-                self.resized_photo = ImageOps.contain(self.pillow_photo, (PHOTO_WIDTH, PHOTO_HEIGHT))
-                self.display_photo = ImageTk.PhotoImage(self.resized_photo)
-                self.photo_canvas.itemconfig(self.photo_id, image=self.display_photo)
+                self.update_display_photo()
                 return True
             else:
                 self.create_popup(
