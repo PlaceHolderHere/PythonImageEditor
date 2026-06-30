@@ -11,6 +11,7 @@ PHOTO_WIDTH: int = SCREEN_WIDTH - 320
 PHOTO_HEIGHT: int = SCREEN_HEIGHT - 180
 PRIMARY_COLOR:str = "#C3D5EF"
 ACCENT_COLOR:str = "#26384D"
+SIDEBAR_BUTTON_SIZE = 64
 SIDEBAR_WIDTH: int = 88
 NAVBAR_HEIGHT: int = 64
 PLACEHOLDER_PHOTO: str = "assets/placeholder-photo.png"
@@ -43,8 +44,11 @@ class PythonImageEditor:
         self.save_button.pack(side="left", pady=20)
 
         # SideBar
-        self.sidebar_frame = tk.Frame(self.root, bg=PRIMARY_COLOR, width=SIDEBAR_WIDTH, height=SCREEN_HEIGHT)
-        self.sidebar_frame.pack(side="left")
+        self.sidebar_frame = tk.Frame(self.root, bg=PRIMARY_COLOR)
+        self.sidebar_frame.pack(side="left", fill="y", ipadx=16)
+
+        self.rotate_btn = tk.Button(self.sidebar_frame, bg=ACCENT_COLOR, text="R", command=self.rotate_image)
+        self.rotate_btn.pack(side="left", padx=16)
 
         # Content Area
         self.content_frame = tk.Frame(self.root)
@@ -65,6 +69,12 @@ class PythonImageEditor:
 
         # Main Loop
         self.root.mainloop()
+
+
+    def rotate_image(self):
+        self.pillow_photo = image_functions.rotate_image(self.pillow_photo, 90)
+        self.update_display_photo()
+
 
     def update_display_photo(self):
         self.resized_photo = ImageOps.contain(self.pillow_photo, (PHOTO_WIDTH, PHOTO_HEIGHT))
