@@ -34,8 +34,8 @@ class PythonImageEditor:
         self.root.resizable(False, False)
 
         # NavBar
-        self.navbar_frame = tk.Frame(self.root, bg=ACCENT_COLOR, width=SCREEN_WIDTH, height=NAVBAR_HEIGHT)
-        self.navbar_frame.pack(side="top", padx=0, pady=0, fill="x")
+        self.navbar_frame = tk.Frame(self.root, bg=ACCENT_COLOR)
+        self.navbar_frame.pack(side="top", ipady=8, fill="x")
 
         self.upload_button = tk.Button(self.navbar_frame, text="upload", command=self.update_upload_path)
         self.upload_button.pack(side="left", padx=16, pady=20)
@@ -48,7 +48,10 @@ class PythonImageEditor:
         self.sidebar_frame.pack(side="left", fill="y", ipadx=16)
 
         self.rotate_btn = tk.Button(self.sidebar_frame, bg=ACCENT_COLOR, text="R", command=self.rotate_image)
-        self.rotate_btn.pack(side="left", padx=16)
+        self.rotate_btn.pack(padx=16)
+
+        self.vertical_flip_btn = tk.Button(self.sidebar_frame, bg=ACCENT_COLOR, text="V", command=self.vertical_flip)
+        self.vertical_flip_btn.pack(padx=16)
 
         # Content Area
         self.content_frame = tk.Frame(self.root)
@@ -69,12 +72,6 @@ class PythonImageEditor:
 
         # Main Loop
         self.root.mainloop()
-
-
-    def rotate_image(self):
-        self.pillow_photo = image_functions.rotate_image(self.pillow_photo, 90)
-        self.update_display_photo()
-
 
     def update_display_photo(self):
         self.resized_photo = ImageOps.contain(self.pillow_photo, (PHOTO_WIDTH, PHOTO_HEIGHT))
@@ -179,6 +176,15 @@ class PythonImageEditor:
 
         close_btn = tk.Button(popup, text="Close", width=7, height=2, command=popup.destroy, bg=PRIMARY_COLOR)
         close_btn.pack()
+
+    # Image Functions
+    def rotate_image(self):
+        self.pillow_photo = image_functions.rotate_image(self.pillow_photo, 90)
+        self.update_display_photo()
+
+    def vertical_flip(self):
+        self.pillow_photo = image_functions.vertical_flip(self.pillow_photo)
+        self.update_display_photo()
 
 if __name__ == "__main__":
     PythonImageEditor()
