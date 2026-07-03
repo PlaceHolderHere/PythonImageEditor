@@ -53,6 +53,9 @@ class PythonImageEditor:
         self.vertical_flip_btn = tk.Button(self.sidebar_frame, bg=ACCENT_COLOR, text="V", command=self.vertical_flip)
         self.vertical_flip_btn.pack(padx=16)
 
+        self.horizontal_flip_btn = tk.Button(self.sidebar_frame, bg=ACCENT_COLOR, text="H", command=self.horizontal_flip)
+        self.horizontal_flip_btn.pack(padx=16)
+
         # Content Area
         self.content_frame = tk.Frame(self.root)
         self.content_frame.pack(side="right", fill="both", expand=True)
@@ -184,6 +187,10 @@ class PythonImageEditor:
 
     def vertical_flip(self):
         self.pillow_photo = image_functions.vertical_flip(self.pillow_photo)
+        self.update_display_photo()
+
+    def horizontal_flip(self):
+        self.pillow_photo = image_functions.horizontal_flip(self.pillow_photo)
         self.update_display_photo()
 
 if __name__ == "__main__":
