@@ -87,6 +87,17 @@ class PythonImageEditor:
         self.display_photo = ImageTk.PhotoImage(self.resized_photo)
         self.photo_canvas.itemconfig(self.photo_id, image=self.display_photo)
 
+    def update_photo(self, photo_path: str) -> bool:
+        try:
+            self.pillow_photo = Image.open(photo_path)
+        except:
+            return False
+
+        self.photo_path = photo_path
+        self.photo_name, self.photo_extension = os.path.splitext(os.path.basename(photo_path))
+        self.update_display_photo()
+        return True
+
     @staticmethod
     def get_upload_path() -> str:
         return filedialog.askopenfilename(
@@ -100,13 +111,7 @@ class PythonImageEditor:
         # Checking if a file was selected
         if selected_path:
             if self.verify_image_path(selected_path):
-                # Updating Related Variables/Labels After Selecting a new Photo
-                self.pillow_photo.close()
-                self.photo_path = selected_path
-                self.photo_name, self.photo_extension = os.path.splitext(os.path.basename(self.photo_path))
-                self.pillow_photo = Image.open(self.photo_path)
-                self.update_display_photo()
-                return True
+                return self.update_photo(selected_path)
             else:
                 self.create_popup(
                     "Error!",
