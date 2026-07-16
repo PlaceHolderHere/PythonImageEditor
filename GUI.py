@@ -175,6 +175,52 @@ class PythonImageEditor:
             return False
         return True
 
+    # Image Functions
+    def rotate_image(self) -> bool:
+        try:
+            self.pillow_photo = image_functions.rotate_image(self.pillow_photo, 90)
+            self.update_display_photo()
+        except:
+            return False
+
+        return True
+
+    def vertical_flip(self) -> bool:
+        try:
+            self.pillow_photo = image_functions.vertical_flip(self.pillow_photo)
+            self.update_display_photo()
+        except:
+            return False
+
+        return True
+
+    def horizontal_flip(self) -> bool:
+        try:
+            self.pillow_photo = image_functions.horizontal_flip(self.pillow_photo)
+            self.update_display_photo()
+        except:
+            return False
+        return True
+
+    def gray_scale(self) -> bool:
+        try:
+            self.pillow_photo = image_functions.gray_scale(self.pillow_photo)
+            self.update_display_photo()
+        except:
+            return False
+
+        return True
+
+    def edges(self) -> bool:
+        try:
+            self.pillow_photo = image_functions.edge_detection(self.pillow_photo)
+            self.update_display_photo()
+        except:
+            return False
+
+        return True
+
+    # Create Widgets
     def create_popup(self,  title: str, message: str, size: tuple[int, int]) -> None:
         # Creating a pop-up to show an error
         popup = tk.Toplevel(self.root)
@@ -191,26 +237,6 @@ class PythonImageEditor:
         close_btn = tk.Button(popup, text="Close", width=7, height=2, command=popup.destroy, bg=PRIMARY_COLOR)
         close_btn.pack()
 
-    # Image Functions
-    def rotate_image(self):
-        self.pillow_photo = image_functions.rotate_image(self.pillow_photo, 90)
-        self.update_display_photo()
-
-    def vertical_flip(self):
-        self.pillow_photo = image_functions.vertical_flip(self.pillow_photo)
-        self.update_display_photo()
-
-    def horizontal_flip(self):
-        self.pillow_photo = image_functions.horizontal_flip(self.pillow_photo)
-        self.update_display_photo()
-
-    def gray_scale(self):
-        self.pillow_photo = image_functions.gray_scale(self.pillow_photo)
-        self.update_display_photo()
-
-    def edges(self):
-        self.pillow_photo = image_functions.edge_detection(self.pillow_photo)
-        self.update_display_photo()
 
 if __name__ == "__main__":
     PythonImageEditor()
