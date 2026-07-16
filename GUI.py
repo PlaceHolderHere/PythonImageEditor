@@ -37,7 +37,7 @@ class PythonImageEditor:
         self.navbar_frame = tk.Frame(self.root, bg=ACCENT_COLOR)
         self.navbar_frame.pack(side="top", ipady=8, fill="x")
 
-        self.upload_button = tk.Button(self.navbar_frame, text="upload", command=self.update_upload_path)
+        self.upload_button = tk.Button(self.navbar_frame, text="upload", command=self.upload_photo)
         self.upload_button.pack(side="left", padx=16, pady=20)
 
         self.save_button = tk.Button(self.navbar_frame, text="save", command=self.save_photo)
@@ -98,28 +98,41 @@ class PythonImageEditor:
         self.update_display_photo()
         return True
 
+    # Uploading a Photo
     @staticmethod
-    def get_upload_path() -> str:
-        return filedialog.askopenfilename(
+    def verify_upload(path) -> bool:
+        if not path:
+            return False
+
+        if not os.path.exists(path):
+            return False
+
+        filename, ext = os.path.splitext(path)
+        if ext.lower() not in VALID_FILE_EXTENSIONS:
+            return False
+
+        return True
+
+    def upload_photo(self):
+        selected_path = filedialog.askopenfilename(
             title="Select a Photo to Edit",
             filetypes=[("Photos", UPLOAD_BUTTON_EXTENSIONS)],
         )
 
-    def update_upload_path(self) -> bool:
-        selected_path = self.get_upload_path()
-
         # Checking if a file was selected
-        if selected_path:
-            if self.verify_image_path(selected_path):
-                return self.update_photo(selected_path)
-            else:
-                self.create_popup(
-                    "Error!",
-                    "Invalid Input Image! Please try uploading again.",
-                    (400, 100)
-                )
+        if self.verify_upload(selected_path):
+            return self.update_photo(selected_path)
+
+        else:
+            self.create_popup(
+                "Error!",
+                "Invalid Input Image! Please try uploading again.",
+                (400, 100)
+            )
+
         return False
 
+    # Outputting/Saving a Photo
     def get_output_path(self) -> str:
         return filedialog.asksaveasfilename(
             title="Save Photo",
@@ -164,16 +177,6 @@ class PythonImageEditor:
                     (400, 100)
                 )
         return False
-
-    @staticmethod
-    def verify_image_path(path: str) -> bool:
-        if not os.path.exists(path):
-            return False
-
-        name, ext = os.path.splitext(path)
-        if ext.lower() not in VALID_FILE_EXTENSIONS:
-            return False
-        return True
 
     # Image Functions
     def rotate_image(self) -> bool:
