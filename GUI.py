@@ -224,6 +224,52 @@ class PythonImageEditor:
         return True
 
     # Create Widgets
+    def create_alert(self, message):
+        alert = tk.Toplevel(self.root)
+        alert.overrideredirect(True)
+        alert.attributes("-topmost", True)
+        alert.configure(bg="#555555")
+        alert_label = tk.Label(
+            alert,
+            text=message,
+            fg="white",
+            bg="#555555",
+            padx=15,
+            pady=10,
+            font=("Arial", 11)
+        )
+        alert_label.pack()
+
+        close_btn = tk.Button(
+            alert,
+            text="Okay",
+            fg="#ffffff",
+            bg="#333333",
+            activeforeground="white",
+            activebackground="#444444",
+            bd=0,
+            font=("Arial", 13, "bold"),
+            cursor="hand2",
+            command=alert.destroy
+        )
+        close_btn.pack(padx=(0, 5))
+
+        # Positioning the alert
+        self.root.update_idletasks()
+
+        parent_x = self.root.winfo_x()
+        alert_y = self.root.winfo_y() + 35
+        parent_width = self.root.winfo_width()
+
+        alert.update_idletasks()
+        alert_width = alert.winfo_width()
+        alert_height = alert.winfo_height()
+
+        alert_x = (parent_x + parent_width - (alert_width // 2)) // 2
+
+        alert.geometry(f"{alert_width}x{alert_height}+{alert_x}+{alert_y}")
+        alert.after(3000, alert.destroy)
+
     def create_popup(self,  title: str, message: str, size: tuple[int, int]) -> None:
         # Creating a pop-up to show an error
         popup = tk.Toplevel(self.root)
