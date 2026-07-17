@@ -101,9 +101,6 @@ class PythonImageEditor:
     # Uploading a Photo
     @staticmethod
     def verify_upload(path) -> bool:
-        if not path:
-            return False
-
         if not os.path.exists(path):
             return False
 
@@ -120,6 +117,9 @@ class PythonImageEditor:
         )
 
         # Checking if a file was selected
+        if not selected_path:
+            return False
+
         if self.verify_upload(selected_path):
             return self.update_photo(selected_path)
 
